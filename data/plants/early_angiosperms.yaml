@@ -1,0 +1,11 @@
+plant_key: "early_angiosperms"
+common_name: "Flowering Shrubs and Early Angiosperms"
+scientific_name: "Proto-Magnolia and Lauraceae"
+layer_index: 1
+base_growth_rate: 0.003
+nutrient_demand: 0.5
+description: "Pioneering flowering shrubs and small trees producing seeds, fruits, and insect-pollinated flowers."
+terrain_affinities:
+  - "FLOODPLAIN"
+  - "OPEN_WOODLAND"
+  - "FOREST"

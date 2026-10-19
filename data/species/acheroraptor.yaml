@@ -1,0 +1,42 @@
+species_key: "acheroraptor"
+common_name: "Acheroraptor"
+scientific_name: "Acheroraptor temertyorum"
+diet: "CARNIVORE"
+activity_pattern: "DIURNAL"
+reproduction_type: "EGG_LAYING"
+body_mass_kg: 25.0
+lifespan_years: 12.0
+maturity_age_years: 2.0
+max_speed_cells_per_tick: 6.5
+vision_range_cells: 25.0
+fov_degrees: 260.0
+smell_range_cells: 12.0
+hearing_range_cells: 14.0
+breeding_season: "SPRING"
+defense_type: "flee"
+hunt_style: "pack"
+min_clutch_size: 4
+max_clutch_size: 8
+incubation_days: 35.0
+parental_care_days: 40.0
+endothermic: true
+prey_species:
+  - "didelphodon"
+  - "thescelosaurus"
+  - "freshwater_turtle"
+fear_species:
+  - "dakotaraptor"
+  - "tyrannosaurus_rex"
+preferred_plant_layers: []
+life_stages:
+  hatchling_years: 0.2
+  juvenile_years: 0.8
+  subadult_years: 1.5
+  senescent_start_years: 9.0
+personality_defaults:
+  aggression: 0.65
+  boldness: 0.60
+  curiosity: 0.70
+  sociality: 0.65
+  metabolic_efficiency: 1.1
+description: "Agile small dromaeosaur pursuing smaller vertebrates and raiding nests in pairs."

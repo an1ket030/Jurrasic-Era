@@ -1,0 +1,42 @@
+species_key: "deinosuchus"
+common_name: "Deinosuchus"
+scientific_name: "Deinosuchus riograndensis"
+diet: "CARNIVORE"
+activity_pattern: "CREPUSCULAR"
+reproduction_type: "EGG_LAYING"
+body_mass_kg: 2500.0
+lifespan_years: 50.0
+maturity_age_years: 15.0
+max_speed_cells_per_tick: 3.0
+vision_range_cells: 20.0
+fov_degrees: 200.0
+smell_range_cells: 15.0
+hearing_range_cells: 12.0
+breeding_season: "SPRING"
+defense_type: "armor"
+hunt_style: "aquatic_ambush"
+min_clutch_size: 2
+max_clutch_size: 5
+incubation_days: 75.0
+parental_care_days: 30.0
+endothermic: false
+prey_species:
+  - "freshwater_fish"
+  - "freshwater_turtle"
+  - "thescelosaurus"
+  - "edmontosaurus"
+fear_species:
+  - "tyrannosaurus_rex"
+preferred_plant_layers: []
+life_stages:
+  hatchling_years: 1.0
+  juvenile_years: 6.0
+  subadult_years: 12.0
+  senescent_start_years: 40.0
+personality_defaults:
+  aggression: 0.70
+  boldness: 0.60
+  curiosity: 0.30
+  sociality: 0.10
+  metabolic_efficiency: 1.2
+description: "Gigantic crocodilian lurker along river meanders and lake shorelines."

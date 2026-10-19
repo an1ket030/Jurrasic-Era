@@ -1,0 +1,41 @@
+species_key: "insect_swarm"
+common_name: "Insect Swarm"
+scientific_name: "Insecta (Odonata, Coleoptera)"
+diet: "HERBIVORE"
+activity_pattern: "DIURNAL"
+reproduction_type: "EGG_LAYING"
+body_mass_kg: 0.05
+lifespan_years: 0.5
+maturity_age_years: 0.05
+max_speed_cells_per_tick: 3.0
+vision_range_cells: 8.0
+fov_degrees: 360.0
+smell_range_cells: 5.0
+hearing_range_cells: 6.0
+breeding_season: "SPRING_SUMMER"
+defense_type: "flee"
+hunt_style: "pursuit"
+min_clutch_size: 2
+max_clutch_size: 6
+incubation_days: 5.0
+parental_care_days: 0.0
+endothermic: false
+prey_species: []
+fear_species:
+  - "didelphodon"
+  - "anzu_wyliei"
+preferred_plant_layers:
+  - 0
+  - 1
+life_stages:
+  hatchling_years: 0.02
+  juvenile_years: 0.03
+  subadult_years: 0.04
+  senescent_start_years: 0.4
+personality_defaults:
+  aggression: 0.0
+  boldness: 0.1
+  curiosity: 0.4
+  sociality: 0.99
+  metabolic_efficiency: 1.5
+description: "Dense swarms of primitive dragonflies, beetles, and orthopterans serving as insectivore prey."

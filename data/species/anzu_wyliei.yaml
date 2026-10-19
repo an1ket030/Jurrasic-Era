@@ -1,0 +1,43 @@
+species_key: "anzu_wyliei"
+common_name: "Anzu wyliei"
+scientific_name: "Anzu wyliei"
+diet: "OMNIVORE"
+activity_pattern: "DIURNAL"
+reproduction_type: "EGG_LAYING"
+body_mass_kg: 250.0
+lifespan_years: 20.0
+maturity_age_years: 4.0
+max_speed_cells_per_tick: 5.0
+vision_range_cells: 26.0
+fov_degrees: 270.0
+smell_range_cells: 10.0
+hearing_range_cells: 15.0
+breeding_season: "SPRING"
+defense_type: "flee"
+hunt_style: "pursuit"
+min_clutch_size: 2
+max_clutch_size: 5
+incubation_days: 50.0
+parental_care_days: 70.0
+endothermic: true
+prey_species:
+  - "didelphodon"
+  - "freshwater_turtle"
+fear_species:
+  - "tyrannosaurus_rex"
+  - "dakotaraptor"
+preferred_plant_layers:
+  - 0
+  - 1
+life_stages:
+  hatchling_years: 0.3
+  juvenile_years: 1.5
+  subadult_years: 3.0
+  senescent_start_years: 15.0
+personality_defaults:
+  aggression: 0.50
+  boldness: 0.55
+  curiosity: 0.80
+  sociality: 0.50
+  metabolic_efficiency: 1.0
+description: "Crested oviraptorosaur omnivore with versatile feeding habits and vivid mating displays."

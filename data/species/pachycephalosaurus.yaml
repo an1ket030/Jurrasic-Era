@@ -1,0 +1,41 @@
+species_key: "pachycephalosaurus"
+common_name: "Pachycephalosaurus"
+scientific_name: "Pachycephalosaurus wyomingensis"
+diet: "HERBIVORE"
+activity_pattern: "DIURNAL"
+reproduction_type: "EGG_LAYING"
+body_mass_kg: 450.0
+lifespan_years: 22.0
+maturity_age_years: 5.0
+max_speed_cells_per_tick: 4.8
+vision_range_cells: 24.0
+fov_degrees: 280.0
+smell_range_cells: 12.0
+hearing_range_cells: 16.0
+breeding_season: "SPRING"
+defense_type: "charge"
+hunt_style: "pursuit"
+min_clutch_size: 4
+max_clutch_size: 10
+incubation_days: 50.0
+parental_care_days: 60.0
+endothermic: true
+prey_species: []
+fear_species:
+  - "tyrannosaurus_rex"
+  - "dakotaraptor"
+preferred_plant_layers:
+  - 0
+  - 1
+life_stages:
+  hatchling_years: 0.4
+  juvenile_years: 2.0
+  subadult_years: 4.0
+  senescent_start_years: 17.0
+personality_defaults:
+  aggression: 0.60
+  boldness: 0.55
+  curiosity: 0.45
+  sociality: 0.70
+  metabolic_efficiency: 1.0
+description: "Dome-skulled bipedal herbivore living in hierarchical groups with dominance head-butting."

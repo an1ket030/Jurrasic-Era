@@ -1,0 +1,42 @@
+species_key: "quetzalcoatlus"
+common_name: "Quetzalcoatlus"
+scientific_name: "Quetzalcoatlus northropi"
+diet: "CARNIVORE"
+activity_pattern: "DIURNAL"
+reproduction_type: "EGG_LAYING"
+body_mass_kg: 250.0
+lifespan_years: 30.0
+maturity_age_years: 6.0
+max_speed_cells_per_tick: 7.0
+vision_range_cells: 45.0
+fov_degrees: 320.0
+smell_range_cells: 20.0
+hearing_range_cells: 14.0
+breeding_season: "SPRING"
+defense_type: "flee"
+hunt_style: "aerial"
+min_clutch_size: 2
+max_clutch_size: 5
+incubation_days: 60.0
+parental_care_days: 80.0
+endothermic: true
+prey_species:
+  - "freshwater_fish"
+  - "didelphodon"
+  - "freshwater_turtle"
+  - "thescelosaurus"
+fear_species:
+  - "tyrannosaurus_rex"
+preferred_plant_layers: []
+life_stages:
+  hatchling_years: 0.5
+  juvenile_years: 2.5
+  subadult_years: 5.0
+  senescent_start_years: 24.0
+personality_defaults:
+  aggression: 0.40
+  boldness: 0.50
+  curiosity: 0.70
+  sociality: 0.20
+  metabolic_efficiency: 1.05
+description: "Towering azhdarchid pterosaur soaring on thermals to spot distant carcasses and small prey."

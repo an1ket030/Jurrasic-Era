@@ -1,0 +1,42 @@
+species_key: "dakotaraptor"
+common_name: "Dakotaraptor"
+scientific_name: "Dakotaraptor steini"
+diet: "CARNIVORE"
+activity_pattern: "DIURNAL"
+reproduction_type: "EGG_LAYING"
+body_mass_kg: 300.0
+lifespan_years: 18.0
+maturity_age_years: 4.0
+max_speed_cells_per_tick: 6.0
+vision_range_cells: 28.0
+fov_degrees: 240.0
+smell_range_cells: 14.0
+hearing_range_cells: 16.0
+breeding_season: "SPRING"
+defense_type: "flee"
+hunt_style: "pack"
+min_clutch_size: 4
+max_clutch_size: 10
+incubation_days: 45.0
+parental_care_days: 60.0
+endothermic: true
+prey_species:
+  - "thescelosaurus"
+  - "pachycephalosaurus"
+  - "anzu_wyliei"
+  - "edmontosaurus"
+fear_species:
+  - "tyrannosaurus_rex"
+preferred_plant_layers: []
+life_stages:
+  hatchling_years: 0.3
+  juvenile_years: 1.5
+  subadult_years: 3.0
+  senescent_start_years: 14.0
+personality_defaults:
+  aggression: 0.75
+  boldness: 0.80
+  curiosity: 0.65
+  sociality: 0.80
+  metabolic_efficiency: 1.0
+description: "Large feathered dromaeosaur hunting in packs with coordinated flanking tactics."

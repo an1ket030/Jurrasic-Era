@@ -1,0 +1,42 @@
+world_name: "hell_creek"
+title: "Hell Creek Floodplain & Wetlands"
+period: "Late Cretaceous (~67 Ma)"
+location: "Western North America (Laramidia)"
+width: 120
+height: 120
+days_per_season: 90
+aging_scale: 50.0
+population_cap: 1500
+
+climate:
+  base_temperature_c: 24.0
+  seasonal_temp_amplitude: 10.0
+  diurnal_temp_amplitude: 5.0
+  rainfall_frequency: 0.15
+  wildfire_frequency: 0.02
+
+terrain_generation:
+  river_count: 1
+  lake_count: 3
+  swamp_coverage: 0.12
+  forest_coverage: 0.25
+  woodland_coverage: 0.30
+  floodplain_coverage: 0.20
+  rocky_hills_coverage: 0.13
+
+initial_populations:
+  edmontosaurus: 35
+  triceratops: 18
+  thescelosaurus: 30
+  pachycephalosaurus: 14
+  ankylosaurus: 6
+  didelphodon: 25
+  freshwater_turtle: 15
+  freshwater_fish: 40
+  anzu_wyliei: 8
+  acheroraptor: 10
+  dakotaraptor: 6
+  quetzalcoatlus: 4
+  deinosuchus: 3
+  tyrannosaurus_rex: 2
+  insect_swarm: 30

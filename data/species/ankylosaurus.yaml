@@ -1,0 +1,39 @@
+species_key: "ankylosaurus"
+common_name: "Ankylosaurus"
+scientific_name: "Ankylosaurus magniventris"
+diet: "HERBIVORE"
+activity_pattern: "DIURNAL"
+reproduction_type: "EGG_LAYING"
+body_mass_kg: 6000.0
+lifespan_years: 35.0
+maturity_age_years: 10.0
+max_speed_cells_per_tick: 2.5
+vision_range_cells: 18.0
+fov_degrees: 260.0
+smell_range_cells: 18.0
+hearing_range_cells: 12.0
+breeding_season: "SPRING"
+defense_type: "tail_club"
+hunt_style: "pursuit"
+min_clutch_size: 4
+max_clutch_size: 10
+incubation_days: 70.0
+parental_care_days: 80.0
+endothermic: true
+prey_species: []
+fear_species: []
+preferred_plant_layers:
+  - 0
+  - 1
+life_stages:
+  hatchling_years: 0.8
+  juvenile_years: 4.0
+  subadult_years: 8.0
+  senescent_start_years: 28.0
+personality_defaults:
+  aggression: 0.40
+  boldness: 0.85
+  curiosity: 0.25
+  sociality: 0.20
+  metabolic_efficiency: 0.95
+description: "Heavily armored quadrupedal ankylosaur with devastating defensive tail-club counter-attacks."

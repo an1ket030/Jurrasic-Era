@@ -1,0 +1,41 @@
+species_key: "edmontosaurus"
+common_name: "Edmontosaurus"
+scientific_name: "Edmontosaurus annectens"
+diet: "HERBIVORE"
+activity_pattern: "DIURNAL"
+reproduction_type: "EGG_LAYING"
+body_mass_kg: 4000.0
+lifespan_years: 30.0
+maturity_age_years: 8.0
+max_speed_cells_per_tick: 4.2
+vision_range_cells: 26.0
+fov_degrees: 300.0
+smell_range_cells: 14.0
+hearing_range_cells: 20.0
+breeding_season: "SPRING"
+defense_type: "flee"
+hunt_style: "pursuit"
+min_clutch_size: 3
+max_clutch_size: 6
+incubation_days: 65.0
+parental_care_days: 100.0
+endothermic: true
+prey_species: []
+fear_species:
+  - "tyrannosaurus_rex"
+  - "dakotaraptor"
+preferred_plant_layers:
+  - 0
+  - 1
+life_stages:
+  hatchling_years: 0.5
+  juvenile_years: 3.0
+  subadult_years: 6.5
+  senescent_start_years: 23.0
+personality_defaults:
+  aggression: 0.20
+  boldness: 0.30
+  curiosity: 0.40
+  sociality: 0.90
+  metabolic_efficiency: 1.05
+description: "Abundant duck-billed hadrosaur forming migratory herds with cooperative sentinel vigilance."

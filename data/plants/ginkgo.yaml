@@ -1,0 +1,10 @@
+plant_key: "ginkgo"
+common_name: "Ginkgo"
+scientific_name: "Ginkgo adiantoides"
+layer_index: 2
+base_growth_rate: 0.001
+nutrient_demand: 0.7
+description: "Deciduous gymnosperm trees with fan-shaped leaves, offering seasonal browse and canopy cover."
+terrain_affinities:
+  - "FOREST"
+  - "OPEN_WOODLAND"

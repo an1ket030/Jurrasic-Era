@@ -1,0 +1,11 @@
+plant_key: "swamp_horsetails"
+common_name: "Swamp Horsetails"
+scientific_name: "Equisetum spp."
+layer_index: 4
+base_growth_rate: 0.003
+nutrient_demand: 0.3
+description: "Dense stands of semi-aquatic giant horsetails lining riverbanks, marshes, and mud flats."
+terrain_affinities:
+  - "SWAMP"
+  - "MUD_FLATS"
+  - "RIVER"

@@ -1,0 +1,11 @@
+plant_key: "ground_ferns"
+common_name: "Ground Ferns"
+scientific_name: "Gleichenia and Tempskya spp."
+layer_index: 0
+base_growth_rate: 0.004
+nutrient_demand: 0.2
+description: "Abundant ground cover ferns forming dense undergrowth across floodplains and woodland floors."
+terrain_affinities:
+  - "FLOODPLAIN"
+  - "OPEN_WOODLAND"
+  - "FOREST"

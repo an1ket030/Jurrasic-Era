@@ -1,0 +1,11 @@
+plant_key: "conifers"
+common_name: "Cretaceous Conifers"
+scientific_name: "Brachyphyllum and Araucarioxylon spp."
+layer_index: 3
+base_growth_rate: 0.0005
+nutrient_demand: 1.0
+description: "Towering canopy conifers dominating upland forests and rocky hill slopes, slow to regrow after fires."
+terrain_affinities:
+  - "FOREST"
+  - "ROCKY_HILLS"
+  - "OPEN_WOODLAND"

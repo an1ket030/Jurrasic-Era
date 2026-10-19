@@ -1,0 +1,10 @@
+plant_key: "tree_ferns"
+common_name: "Tree Ferns"
+scientific_name: "Tempskya arborescens"
+layer_index: 2
+base_growth_rate: 0.001
+nutrient_demand: 0.6
+description: "Arborescent false-trunk tree ferns forming sub-canopies in humid forested floodplains."
+terrain_affinities:
+  - "FOREST"
+  - "OPEN_WOODLAND"

@@ -1,0 +1,10 @@
+plant_key: "cycads"
+common_name: "Cycads and Bennettitaleans"
+scientific_name: "Cycadeoidea spp."
+layer_index: 1
+base_growth_rate: 0.002
+nutrient_demand: 0.4
+description: "Hardy, robust low-browse gymnosperms with tough fronds, preferred by ceratopsians."
+terrain_affinities:
+  - "OPEN_WOODLAND"
+  - "FLOODPLAIN"

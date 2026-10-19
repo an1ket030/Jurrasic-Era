@@ -1,0 +1,11 @@
+plant_key: "water_lilies"
+common_name: "Water Lilies and Aquatic Flora"
+scientific_name: "Nymphaeales"
+layer_index: 4
+base_growth_rate: 0.003
+nutrient_demand: 0.3
+description: "Floating and emergent freshwater aquatic macrophytes in oxbow lakes and slow river meanders."
+terrain_affinities:
+  - "LAKE"
+  - "SWAMP"
+  - "RIVER"

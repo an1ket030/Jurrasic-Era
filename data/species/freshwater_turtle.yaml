@@ -1,0 +1,42 @@
+species_key: "freshwater_turtle"
+common_name: "Freshwater Turtle"
+scientific_name: "Axestemys splendida"
+diet: "OMNIVORE"
+activity_pattern: "DIURNAL"
+reproduction_type: "EGG_LAYING"
+body_mass_kg: 20.0
+lifespan_years: 40.0
+maturity_age_years: 8.0
+max_speed_cells_per_tick: 2.0
+vision_range_cells: 14.0
+fov_degrees: 240.0
+smell_range_cells: 10.0
+hearing_range_cells: 8.0
+breeding_season: "SPRING"
+defense_type: "shell"
+hunt_style: "pursuit"
+min_clutch_size: 3
+max_clutch_size: 6
+incubation_days: 60.0
+parental_care_days: 0.0
+endothermic: false
+prey_species:
+  - "freshwater_fish"
+fear_species:
+  - "deinosuchus"
+  - "tyrannosaurus_rex"
+preferred_plant_layers:
+  - 4
+  - 5
+life_stages:
+  hatchling_years: 0.5
+  juvenile_years: 3.0
+  subadult_years: 6.0
+  senescent_start_years: 32.0
+personality_defaults:
+  aggression: 0.10
+  boldness: 0.20
+  curiosity: 0.35
+  sociality: 0.15
+  metabolic_efficiency: 1.25
+description: "Large softshell freshwater turtle nesting on sandbanks and grazing on aquatic macrophytes."

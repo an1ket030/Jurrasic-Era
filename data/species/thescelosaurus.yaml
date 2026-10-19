@@ -1,0 +1,44 @@
+species_key: "thescelosaurus"
+common_name: "Thescelosaurus"
+scientific_name: "Thescelosaurus neglectus"
+diet: "HERBIVORE"
+activity_pattern: "DIURNAL"
+reproduction_type: "EGG_LAYING"
+body_mass_kg: 40.0
+lifespan_years: 14.0
+maturity_age_years: 3.0
+max_speed_cells_per_tick: 6.2
+vision_range_cells: 26.0
+fov_degrees: 300.0
+smell_range_cells: 10.0
+hearing_range_cells: 18.0
+breeding_season: "SPRING"
+defense_type: "flee"
+hunt_style: "pursuit"
+min_clutch_size: 3
+max_clutch_size: 6
+incubation_days: 40.0
+parental_care_days: 45.0
+endothermic: true
+prey_species: []
+fear_species:
+  - "tyrannosaurus_rex"
+  - "dakotaraptor"
+  - "acheroraptor"
+  - "anzu_wyliei"
+  - "deinosuchus"
+preferred_plant_layers:
+  - 0
+  - 1
+life_stages:
+  hatchling_years: 0.2
+  juvenile_years: 1.0
+  subadult_years: 2.2
+  senescent_start_years: 10.0
+personality_defaults:
+  aggression: 0.15
+  boldness: 0.20
+  curiosity: 0.50
+  sociality: 0.55
+  metabolic_efficiency: 1.1
+description: "Fleet-footed, skittish small ornithopod herbivore relying on burst speed and dense cover."

@@ -1,0 +1,11 @@
+plant_key: "freshwater_algae"
+common_name: "Freshwater Algae"
+scientific_name: "Chlorophyta"
+layer_index: 5
+base_growth_rate: 0.006
+nutrient_demand: 0.1
+description: "Rapidly regenerating benthic and planktonic algae forming the base of the aquatic food web."
+terrain_affinities:
+  - "LAKE"
+  - "RIVER"
+  - "SWAMP"

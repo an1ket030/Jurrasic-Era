@@ -267,13 +267,15 @@ All design assumptions recorded during development:
 
 ---
 
-## Known Limitations & Phase 2 Roadmap
+## Further Planned Work
 
-The following elements are explicitly deferred to Phase 2:
-- **Graphical Viewports**: Phase 1 is strictly terminal-focused (TUI and CLI). Phase 2 will introduce an optional web-based canvas or Pygame 2D viewport.
-- **Neural Network Minds**: Phase 1 uses utility AI curves and personality vectors. Phase 2 will introduce reinforcement learning and genetic algorithms.
-- **Speciation & Evolutionary Phylogenetics**: Phase 1 preserves immutable species schemas. Phase 2 will model genetic drift, morphological mutations, and divergence.
-- **Continuous 3D Terrain & Fluid Dynamics**: Phase 1 uses 2D cellular automatas for floods and fires. Phase 2 will incorporate continuous Navier-Stokes fluid approximations.
+The GUI and first perspective 3D viewport are implemented. Future work includes richer GPU-rendered meshes, neural or evolutionary minds, speciation, and continuous terrain and fluid simulation.
+
+## Phase 3: Perspective 3D View (first milestone)
+
+The GUI now includes a perspective 3D view over the existing ecological grid. Press **V** to switch between the isometric and 3D views. In 3D, middle/right-drag orbits the camera, the mouse wheel zooms, and WASD changes camera angle. Select a creature and use WASD to steer it while it is possessed. This is the first renderer milestone: simulation state, saves, and ecological rules remain grid based while the viewport gains perspective terrain, elevation, vegetation, and creature forms.
+
+The next 3D work can replace the software-projected low-poly meshes with a dedicated GPU scene renderer and richer creature models without changing the simulation API.
 
 ---
 

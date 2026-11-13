@@ -541,6 +541,12 @@ def cmd_release(sim: "Simulation", args: dict) -> str:
     return f"Released {agent.display_name} back to autonomous control."
 
 
+@_cmd("unpossess")
+def cmd_unpossess(sim: "Simulation", args: dict) -> str:
+    """Alias for release, matching the GUI and documented command name."""
+    return cmd_release(sim, args)
+
+
 @_cmd("act")
 def cmd_act(sim: "Simulation", args: dict) -> str:
     """Override a possessed creature's action.
@@ -550,6 +556,7 @@ def cmd_act(sim: "Simulation", args: dict) -> str:
     possessing_id = args.get("possessing")
     action = args.get("action", "WANDER").upper()
     action_target = args.get("target")
+    action_position = args.get("position")
 
     if possessing_id:
         agent = sim.find_agent(possessing_id)
@@ -565,6 +572,8 @@ def cmd_act(sim: "Simulation", args: dict) -> str:
         return f"{agent.display_name} is not possessed."
 
     agent.current_action = action
+    if action_position is not None:
+        agent.action_target_pos = tuple(action_position)
     if action_target:
         target_agent = sim.find_agent(action_target)
         if target_agent:
@@ -756,6 +765,46 @@ def cmd_set_weather(sim: "Simulation", args: dict) -> str:
         return "Weather cleared."
     sim.world._start_weather(wt, 240)
     return f"Weather set to {weather_str} for 240 ticks"
+
+
+@_cmd("bloom")
+def cmd_bloom(sim: "Simulation", args: dict) -> str:
+    """Rapidly regrow plants using the world's terrain and layer capacities."""
+    fire_cells = sim.world.weather.fire_cells
+    sim.world.weather.fire_cells = set()
+    try:
+        for _ in range(24):
+            sim.world._update_plants()
+    finally:
+        sim.world.weather.fire_cells = fire_cells
+    return "Vegetation regrown across the ecosystem."
+
+
+@_cmd("clear_carcasses")
+def cmd_clear_carcasses(sim: "Simulation", args: dict) -> str:
+    count = len(sim.carcasses)
+    for carcass in list(sim.carcasses.values()):
+        sim.carcass_hash.remove(carcass)
+    sim.carcasses.clear()
+    return f"Removed {count} carcass(es)."
+
+
+@_cmd("mate")
+def cmd_mate_nearest(sim: "Simulation", args: dict) -> str:
+    """Attempt forced mating with the nearest eligible conspecific."""
+    target = sim.find_agent(args.get("target", ""))
+    if target is None:
+        return f"Agent not found: '{args.get('target', '')}'"
+    candidates = [a for a in sim.agents.values() if a.id != target.id
+                  and a.alive and a.species_key == target.species_key
+                  and a.is_adult_capable]
+    if not candidates:
+        return f"No adult {target.species_key} partner is available."
+    partner = min(candidates, key=lambda a: (target.distance_to(a), a.id))
+    from prehistoric_sim.engine.reproduction import attempt_mating  # noqa: PLC0415
+    sd = sim.species_data.get(target.species_key, {})
+    attempt_mating(target, partner, sim.world, sd, sim.event_bus, sim.rng, sim.config.aging_scale)
+    return f"Forced mating attempt: {target.display_name} and {partner.display_name}."
 
 
 # --- SAVE/LOAD ---

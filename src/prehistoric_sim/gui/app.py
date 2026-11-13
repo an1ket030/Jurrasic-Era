@@ -59,6 +59,7 @@ from prehistoric_sim.gui.colors import BG_DARK, HUD_DANGER, HUD_OK, HUD_WARNING
 from prehistoric_sim.gui.hud import HUD
 from prehistoric_sim.gui.side_panel import SidePanel
 from prehistoric_sim.gui.world_canvas import WorldCanvas
+from prehistoric_sim.gui.renderer3d import World3DRenderer
 
 # ---------------------------------------------------------------------------
 # Layout constants
@@ -205,7 +206,7 @@ def _parse_and_dispatch(sim: Simulation, raw_cmd: str) -> str:
         if len(args_list) > 4:
             args["name"] = args_list[4]
     elif cmd in ("kill", "starve", "heal", "inspect", "track", "untrack",
-                  "possess", "unpossess"):
+                  "possess", "unpossess", "release"):
         args["target"] = args_list[0] if args_list else ""
     elif cmd == "injure":
         args["target"] = args_list[0] if args_list else ""
@@ -215,6 +216,8 @@ def _parse_and_dispatch(sim: Simulation, raw_cmd: str) -> str:
         args["new_name"] = args_list[1] if len(args_list) > 1 else ""
     elif cmd == "act":
         args["action"] = args_list[0].upper() if args_list else "WANDER"
+        if len(args_list) > 1:
+            args["target"] = args_list[1]
     elif cmd in ("weather", "season"):
         args["value"] = args_list[0].upper() if args_list else ""
     elif cmd in ("fire", "flood"):
@@ -224,6 +227,9 @@ def _parse_and_dispatch(sim: Simulation, raw_cmd: str) -> str:
         args["multiplier"] = float(args_list[0]) if args_list else 1.0
     elif cmd == "step":
         args["ticks"] = int(args_list[0]) if args_list else 1
+    elif cmd == "set_time":
+        args["day"] = sim.world.day
+        args["hour"] = float(args_list[0]) if args_list else 12.0
     elif cmd == "save":
         args["filename"] = args_list[0] if args_list else "snapshot.json"
     elif cmd == "load":
@@ -258,6 +264,7 @@ class GuiApp:
         self._hovered_id:   str | None = None
         self._hovered_pos:  tuple[int, int] | None = None
         self._follow_mode:  bool = False
+        self._view_3d: bool = False
 
     def run(self) -> None:
         pygame.init()
@@ -278,6 +285,7 @@ class GuiApp:
             self._canvas_h,
         )
         self._canvas = WorldCanvas(self.sim.world.width, self.sim.world.height)
+        self._renderer3d = World3DRenderer(self.sim.world.width, self.sim.world.height)
         self._panel  = SidePanel(self._panel_rect, on_admin_cmd=self._handle_panel_admin_cmd)
         self._hud    = HUD(self._screen_w, self._screen_h, self.sim.world.width, self.sim.world.height)
         self._admin  = AdminBar(
@@ -344,7 +352,10 @@ class GuiApp:
                 a = agents.get(self._selected_id)
                 if a and a.get("position"):
                     gx, gy = a["position"]
-                    self._camera.center_on(gx + 0.5, gy + 0.5)
+                    if self._view_3d:
+                        self._renderer3d.target = (gx + 0.5, gy + 0.5)
+                    else:
+                        self._camera.center_on(gx + 0.5, gy + 0.5)
 
             self._handle_events()
             self._draw()
@@ -356,7 +367,10 @@ class GuiApp:
         # 1. World Canvas
         canvas_surf = screen.subsurface(self._canvas_rect)
         canvas_surf.fill(BG_DARK)
-        self._canvas.draw(canvas_surf, self._camera)
+        if self._view_3d:
+            self._renderer3d.draw(canvas_surf, self._render_state, self._selected_id)
+        else:
+            self._canvas.draw(canvas_surf, self._camera)
 
         # 2. Concept Art HUD Overlays
         hud_surf = screen.subsurface(self._canvas_rect)
@@ -445,7 +459,9 @@ class GuiApp:
             if event.type == pygame.MOUSEWHEEL:
                 mx, my = mouse_pos
                 if mx < self._canvas_w:
-                    if event.y > 0:
+                    if self._view_3d:
+                        self._renderer3d.zoom(event.y)
+                    elif event.y > 0:
                         self._camera.zoom_in(mx, my)
                     else:
                         self._camera.zoom_out(mx, my)
@@ -473,12 +489,18 @@ class GuiApp:
 
                 # Middle click — pan
                 if event.button == 2:
-                    self._camera.begin_drag(mx, my)
+                    if self._view_3d:
+                        self._renderer3d.begin_orbit(mx, my)
+                    else:
+                        self._camera.begin_drag(mx, my)
                     continue
 
                 # Left click on canvas — select creature
                 if event.button == 1:
-                    hit = self._canvas.agent_at_screen(mx, my, self._camera, self._render_state)
+                    hit = (self._renderer3d.agent_at(mx, my, (self._canvas_w, self._canvas_h),
+                                                     self._render_state.get("agents", {}))
+                           if self._view_3d else
+                           self._canvas.agent_at_screen(mx, my, self._camera, self._render_state))
                     if hit:
                         self._selected_id = hit
                         self._canvas.selected_id = hit
@@ -492,13 +514,18 @@ class GuiApp:
 
                 # Right click — coordinate info
                 if event.button == 3:
-                    gx, gy = self._camera.screen_to_cell(mx, my)
-                    self._admin.set_feedback(f"Grid sector: ({gx}, {gy})")
+                    if self._view_3d:
+                        self._renderer3d.begin_orbit(mx, my)
+                    else:
+                        gx, gy = self._camera.screen_to_cell(mx, my)
+                        self._admin.set_feedback(f"Grid sector: ({gx}, {gy})")
                     continue
 
             if event.type == pygame.MOUSEBUTTONUP:
-                if event.button == 2:
+                if event.button == 2 and not self._view_3d:
                     self._camera.end_drag()
+                elif event.button in (2, 3) and self._view_3d:
+                    self._renderer3d.end_orbit()
                 continue
 
             # Mouse motion: drag pan & hover
@@ -506,9 +533,14 @@ class GuiApp:
                 mx, my = event.pos
                 if self._camera.is_dragging():
                     self._camera.update_drag(mx, my)
+                if self._view_3d and self._renderer3d.drag_origin is not None:
+                    self._renderer3d.orbit(mx, my)
 
                 if mx < self._canvas_w and my < self._canvas_h:
-                    hit = self._canvas.agent_at_screen(mx, my, self._camera, self._render_state)
+                    hit = (self._renderer3d.agent_at(mx, my, (self._canvas_w, self._canvas_h),
+                                                     self._render_state.get("agents", {}))
+                           if self._view_3d else
+                           self._canvas.agent_at_screen(mx, my, self._camera, self._render_state))
                     self._hovered_id  = hit
                     self._hovered_pos = (mx, my) if hit else None
                     self._canvas.hovered_id  = hit
@@ -557,20 +589,40 @@ class GuiApp:
             if self._selected_id:
                 self._follow_mode = not self._follow_mode
 
+        elif key == pygame.K_v:
+            self._view_3d = not self._view_3d
+            self._admin.set_feedback("Perspective 3D view" if self._view_3d else "Isometric view")
+
         elif key == pygame.K_ESCAPE:
             self._selected_id = None
             self._canvas.selected_id = None
             self._follow_mode = False
 
         # WASD pan
-        elif key == pygame.K_w:
-            self._camera.pan(0, -35)
-        elif key == pygame.K_s:
-            self._camera.pan(0, 35)
-        elif key == pygame.K_a:
-            self._camera.pan(-35, 0)
-        elif key == pygame.K_d:
-            self._camera.pan(35, 0)
+        elif key in (pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d):
+            direction = {pygame.K_w: (0, -1), pygame.K_s: (0, 1),
+                         pygame.K_a: (-1, 0), pygame.K_d: (1, 0)}[key]
+            selected = self._render_state.get("agents", {}).get(self._selected_id)
+            if selected and selected.get("possessed"):
+                x, y = selected["position"]
+                gx = max(0, min(self.sim.world.width - 1, int(x) + direction[0] * 3))
+                gy = max(0, min(self.sim.world.height - 1, int(y) + direction[1] * 3))
+                self.sim.apply_admin_command("act", {"action": "MOVE", "possessing": self._selected_id,
+                                                       "position": (gx, gy)})
+            else:
+                if self._view_3d:
+                    if key == pygame.K_a:
+                        self._renderer3d.yaw -= 0.12
+                    elif key == pygame.K_d:
+                        self._renderer3d.yaw += 0.12
+                    elif key == pygame.K_w:
+                        self._renderer3d.pitch = min(1.25, self._renderer3d.pitch + 0.06)
+                    else:
+                        self._renderer3d.pitch = max(0.22, self._renderer3d.pitch - 0.06)
+                    continue
+                delta = {pygame.K_w: (0, -35), pygame.K_s: (0, 35),
+                         pygame.K_a: (-35, 0), pygame.K_d: (35, 0)}[key]
+                self._camera.pan(*delta)
 
     def _handle_admin_command(self, raw_cmd: str) -> str:
         cmd_lower = raw_cmd.strip().lower()

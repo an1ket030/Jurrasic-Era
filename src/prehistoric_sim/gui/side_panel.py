@@ -165,6 +165,7 @@ class SidePanel:
         self._census: dict[str, int] = {}
         self._species_health: dict[str, float] = {}
         self.inspect_agent: dict[str, Any] | None = None
+        self._world_day = 0
 
         # Admin panel state
         self.selected_spawn_species: str = "tyrannosaurus_rex"
@@ -213,6 +214,7 @@ class SidePanel:
             self._log.append(entry)
 
     def update_from_state(self, state: dict[str, Any], selected_id: str | None) -> None:
+        self._world_day = int(state.get("world", {}).get("day", 0))
         agents = state.get("agents", {})
         census: dict[str, int] = {}
         health_sum: dict[str, float] = {}
@@ -388,7 +390,7 @@ class SidePanel:
             # Action buttons row 2
             r_mate = pygame.Rect(x, y, b_w, 24)
             self._render_admin_button(surface, r_mate, "Force Mating", (90, 45, 100), (220, 100, 240),
-                                      lambda: self._cmd_target("act", "MATE", "Forced Mating!"))
+                                      lambda: self._cmd_target("mate", agent["id"], "Forced mating attempt completed."))
             r_possess = pygame.Rect(x + b_w + 6, y, b_w, 24)
             is_pos = agent.get("possessed", False)
             p_label = "Unpossess" if is_pos else "Possess (WASD)"
@@ -474,8 +476,11 @@ class SidePanel:
     # Admin execution helpers
     def _cmd_target(self, cmd: str, target_id: str, success_msg: str) -> None:
         if self.on_admin_cmd:
-            self.on_admin_cmd(cmd, {"target": target_id})
-            self.set_feedback(success_msg)
+            args = ({"action": target_id, "possessing": self.inspect_agent.get("id")}
+                    if cmd == "act" and self.inspect_agent
+                    else {"target": target_id})
+            result = self.on_admin_cmd(cmd, args)
+            self.set_feedback(str(result) if str(result).startswith(("Error:", "Agent not found", "No creature")) else success_msg)
             sound_engine.play_sfx("god_power")
 
     def _smite_agent(self, target_id: str) -> None:
@@ -505,8 +510,11 @@ class SidePanel:
             sound_engine.play_sfx("splash")
 
     def _set_hour(self, hour_str: str) -> None:
-        self.set_feedback(f"Time shifted to {hour_str}")
-        sound_engine.play_sfx("god_power")
+        if self.on_admin_cmd:
+            hour = int(hour_str.split(":", 1)[0])
+            result = self.on_admin_cmd("set_time", {"day": self._world_day, "hour": hour})
+            self.set_feedback(str(result))
+            sound_engine.play_sfx("god_power")
 
     def _set_season(self, season: str) -> None:
         if self.on_admin_cmd:
@@ -515,8 +523,10 @@ class SidePanel:
             sound_engine.play_sfx("god_power")
 
     def _bloom_flora(self) -> None:
-        self.set_feedback("Vegetation bloomed across the ecosystem!")
-        sound_engine.play_sfx("god_power")
+        if self.on_admin_cmd:
+            result = self.on_admin_cmd("bloom", {})
+            self.set_feedback(str(result))
+            sound_engine.play_sfx("god_power")
 
     def _cmd_simple(self, cmd: str, msg: str) -> None:
         if self.on_admin_cmd:

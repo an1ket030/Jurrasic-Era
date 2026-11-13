@@ -607,7 +607,15 @@ class Simulation:
         if agent.forced_action:
             action = agent.forced_action
 
-        if action == "REST":
+        if action == "MOVE":
+            target = agent.action_target_pos
+            if target is not None:
+                from prehistoric_sim.engine.behaviors import _move_toward  # noqa: PLC0415
+                _move_toward(agent, int(target[0]), int(target[1]), self.world)
+                if agent.position == target:
+                    agent.current_action = "REST"
+                    agent.action_target_pos = None
+        elif action == "REST":
             do_rest(agent, self.world, self.event_bus, self.rng)
         elif action == "SLEEP":
             do_sleep(agent, self.world, self.event_bus, self.rng)

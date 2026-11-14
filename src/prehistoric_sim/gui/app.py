@@ -619,10 +619,10 @@ class GuiApp:
                         self._renderer3d.pitch = min(1.25, self._renderer3d.pitch + 0.06)
                     else:
                         self._renderer3d.pitch = max(0.22, self._renderer3d.pitch - 0.06)
-                    continue
-                delta = {pygame.K_w: (0, -35), pygame.K_s: (0, 35),
-                         pygame.K_a: (-35, 0), pygame.K_d: (35, 0)}[key]
-                self._camera.pan(*delta)
+                else:
+                    delta = {pygame.K_w: (0, -35), pygame.K_s: (0, 35),
+                             pygame.K_a: (-35, 0), pygame.K_d: (35, 0)}[key]
+                    self._camera.pan(*delta)
 
     def _handle_admin_command(self, raw_cmd: str) -> str:
         cmd_lower = raw_cmd.strip().lower()

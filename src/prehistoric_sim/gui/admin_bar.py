@@ -75,6 +75,7 @@ class AdminBar:
         self._history: list[str] = []
         self._history_idx: int = -1
         self._active: bool = True
+        self._focused: bool = False
 
         # Feedback flash
         self._feedback_msg:   str   = ""
@@ -111,7 +112,7 @@ class AdminBar:
 
         # Background
         pygame.draw.rect(surface, INPUT_BG, r)
-        border_col = INPUT_BORDER if self._active else PANEL_BORDER
+        border_col = INPUT_BORDER if self._focused else PANEL_BORDER
         pygame.draw.rect(surface, border_col, r, 1)
 
         # Prompt
@@ -162,7 +163,7 @@ class AdminBar:
 
     def handle_event(self, event: pygame.event.Event) -> bool:
         """Handle a pygame key event. Returns True if consumed."""
-        if event.type != pygame.KEYDOWN:
+        if event.type != pygame.KEYDOWN or not self._focused:
             return False
 
         key = event.key
@@ -246,6 +247,9 @@ class AdminBar:
             return True
 
         return False
+
+    def set_focus(self, focused: bool) -> None:
+        self._focused = focused
 
     # ------------------------------------------------------------------
     # Submit

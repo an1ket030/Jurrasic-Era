@@ -82,7 +82,7 @@ def cmd_spawn(sim: "Simulation", args: dict) -> str:
     """
     from prehistoric_sim.engine.entities import LifeStage  # noqa: PLC0415
 
-    entity_type = args.get("entity_type", "")
+    entity_type = args.get("entity_type", args.get("species", ""))
     count = max(1, int(args.get("count", 1)))
     x = args.get("x")
     y = args.get("y")
@@ -522,6 +522,11 @@ def cmd_possess(sim: "Simulation", args: dict) -> str:
     if agent is None:
         return f"Agent not found: '{target}'"
     agent.possessed = True
+    agent.current_action = "REST"
+    agent.action_target_id = None
+    agent.action_target_pos = None
+    agent.forced_action = None
+    agent.forced_action_ticks = 0
     sim._possessed.add(agent.id)
     return f"Now possessing {agent.display_name}. Use 'act <action>' to control it. 'release {target}' to stop."
 
@@ -581,6 +586,30 @@ def cmd_act(sim: "Simulation", args: dict) -> str:
             agent.action_target_pos = target_agent.position
 
     return f"{agent.display_name} — action set to {action}"
+
+
+@_cmd("steer")
+def cmd_steer(sim: "Simulation", args: dict) -> str:
+    """Move a possessed creature immediately in a requested grid direction."""
+    agent = sim.find_agent(args.get("target", ""))
+    if agent is None:
+        return f"Agent not found: '{args.get('target', '')}'"
+    if not agent.possessed:
+        return f"{agent.display_name} is not possessed."
+    dx = max(-1, min(1, int(args.get("dx", 0))))
+    dy = max(-1, min(1, int(args.get("dy", 0))))
+    if dx == 0 and dy == 0:
+        return "Choose a movement direction."
+    old_position = agent.position
+    distance = max(1, min(3, int(round(agent.effective_speed))))
+    tx = max(0, min(sim.world.width - 1, int(old_position[0]) + dx * distance))
+    ty = max(0, min(sim.world.height - 1, int(old_position[1]) + dy * distance))
+    from prehistoric_sim.engine.behaviors import _move_toward  # noqa: PLC0415
+    _move_toward(agent, tx, ty, sim.world, speed_override=float(distance))
+    agent.current_action = "REST"
+    agent.action_target_pos = None
+    sim.agent_hash.insert(agent, *agent.position)
+    return f"Steered {agent.display_name} from {old_position} to {agent.position}."
 
 
 @_cmd("force")
@@ -765,6 +794,53 @@ def cmd_set_weather(sim: "Simulation", args: dict) -> str:
         return "Weather cleared."
     sim.world._start_weather(wt, 240)
     return f"Weather set to {weather_str} for 240 ticks"
+
+
+@_cmd("weather")
+def cmd_weather_alias(sim: "Simulation", args: dict) -> str:
+    return cmd_set_weather(sim, {"weather": args.get("weather", args.get("value", "CLEAR"))})
+
+
+@_cmd("season")
+def cmd_season_alias(sim: "Simulation", args: dict) -> str:
+    return cmd_set_season(sim, {"season": args.get("season", args.get("value", "SPRING"))})
+
+
+@_cmd("fire")
+def cmd_fire(sim: "Simulation", args: dict) -> str:
+    x = max(0, min(sim.world.width - 1, int(args.get("x", sim.world.width // 2))))
+    y = max(0, min(sim.world.height - 1, int(args.get("y", sim.world.height // 2))))
+    sim.world.weather.fire_cells.add((x, y))
+    return f"Ignited wildfire at ({x}, {y})."
+
+
+@_cmd("flood")
+def cmd_flood(sim: "Simulation", args: dict) -> str:
+    x = max(0, min(sim.world.width - 1, int(args.get("x", sim.world.width // 2))))
+    y = max(0, min(sim.world.height - 1, int(args.get("y", sim.world.height // 2))))
+    radius = max(1, min(8, int(args.get("radius", 3))))
+    cells = {(cx, cy) for cy in range(max(0, y - radius), min(sim.world.height, y + radius + 1))
+             for cx in range(max(0, x - radius), min(sim.world.width, x + radius + 1))
+             if (cx - x) ** 2 + (cy - y) ** 2 <= radius ** 2}
+    sim.world.weather.flood_cells.update(cells)
+    from prehistoric_sim.engine.entities import WeatherType  # noqa: PLC0415
+    sim.world._start_weather(WeatherType.FLOOD, 144)
+    return f"Flooded {len(cells)} cells around ({x}, {y})."
+
+
+@_cmd("extinguish")
+def cmd_extinguish(sim: "Simulation", args: dict) -> str:
+    count = len(sim.world.weather.fire_cells)
+    sim.world.weather.fire_cells.clear()
+    return f"Extinguished {count} active fire cell(s)."
+
+
+@_cmd("stats")
+def cmd_stats(sim: "Simulation", args: dict) -> str:
+    populations = sim.population_by_species()
+    total = sum(populations.values())
+    carcasses = len(sim.carcasses)
+    return f"Population: {total}; species: {len(populations)}; carcasses: {carcasses}; tick: {sim.tick}."
 
 
 @_cmd("bloom")

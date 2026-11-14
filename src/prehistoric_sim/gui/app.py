@@ -86,6 +86,11 @@ def _flatten_2d(arr: Any) -> list[float]:
 
 
 def _build_render_state(sim: "Simulation") -> dict[str, Any]:
+    with sim.state_lock:
+        return _build_render_state_locked(sim)
+
+
+def _build_render_state_locked(sim: "Simulation") -> dict[str, Any]:
     world = sim.world
     ws = {
         "tick":            world.tick,
@@ -472,6 +477,7 @@ class GuiApp:
             # Mouse button down
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mx, my = event.pos
+                self._admin.set_focus(self._admin_rect.collidepoint(event.pos))
 
                 # Click in Side Panel
                 if mx >= self._canvas_w:
@@ -602,13 +608,15 @@ class GuiApp:
         elif key in (pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d):
             direction = {pygame.K_w: (0, -1), pygame.K_s: (0, 1),
                          pygame.K_a: (-1, 0), pygame.K_d: (1, 0)}[key]
-            selected = self._render_state.get("agents", {}).get(self._selected_id)
-            if selected and selected.get("possessed"):
-                x, y = selected["position"]
-                gx = max(0, min(self.sim.world.width - 1, int(x) + direction[0] * 3))
-                gy = max(0, min(self.sim.world.height - 1, int(y) + direction[1] * 3))
-                self.sim.apply_admin_command("act", {"action": "MOVE", "possessing": self._selected_id,
-                                                       "position": (gx, gy)})
+            with self.sim.state_lock:
+                selected = self.sim.agents.get(self._selected_id)
+                if selected and selected.possessed:
+                    self.sim.apply_admin_command("steer", {"target": self._selected_id,
+                                                              "dx": direction[0], "dy": direction[1]})
+                else:
+                    selected = None
+            if selected and selected.possessed:
+                return
             else:
                 if self._view_3d:
                     if key == pygame.K_a:

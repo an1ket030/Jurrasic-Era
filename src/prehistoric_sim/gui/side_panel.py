@@ -172,6 +172,7 @@ class SidePanel:
         self.selected_spawn_count: int = 1
         self.admin_feedback: str = "Admin God Mode Ready."
         self.admin_feedback_time: float = 0.0
+        self.admin_feedback_ok: bool = True
 
         # Clickable button rects for active frame
         self._button_actions: list[tuple[pygame.Rect, Callable[[], None]]] = []
@@ -183,9 +184,10 @@ class SidePanel:
         self._font_title: pygame.font.Font | None = None
         self._font_bold:  pygame.font.Font | None = None
 
-    def set_feedback(self, text: str) -> None:
+    def set_feedback(self, text: str, ok: bool = True) -> None:
         self.admin_feedback = text
         self.admin_feedback_time = time.time()
+        self.admin_feedback_ok = ok
 
     def ingest_event(self, event: Any) -> None:
         cat = str(event.category.value) if hasattr(event.category, "value") else str(event.category)
@@ -283,7 +285,7 @@ class SidePanel:
         w = r.w - pad * 2
 
         # Status & Feedback pill
-        fb_col = HUD_OK if (time.time() - self.admin_feedback_time < 3.0) else HUD_ACCENT
+        fb_col = (HUD_OK if self.admin_feedback_ok else HUD_DANGER) if (time.time() - self.admin_feedback_time < 3.0) else HUD_ACCENT
         pygame.draw.rect(surface, (22, 28, 42), (x, y, w, 28), border_radius=6)
         pygame.draw.rect(surface, PANEL_BORDER, (x, y, w, 28), 1, border_radius=6)
         if self._font_small:
@@ -358,9 +360,9 @@ class SidePanel:
 
         def do_spawn():
             if self.on_admin_cmd:
-                res = self.on_admin_cmd("spawn", {"species": self.selected_spawn_species, "count": self.selected_spawn_count, "x": 60, "y": 60})
-                self.set_feedback(f"Spawned {self.selected_spawn_count}x {self.selected_spawn_species}!")
-                sound_engine.play_sfx("god_power")
+                res = self.on_admin_cmd("spawn", {"entity_type": self.selected_spawn_species,
+                                                    "count": self.selected_spawn_count, "x": 60, "y": 60})
+                self._show_command_result(res)
         self._button_actions.append((spawn_r, do_spawn))
 
         y += 34
@@ -480,58 +482,63 @@ class SidePanel:
                     if cmd == "act" and self.inspect_agent
                     else {"target": target_id})
             result = self.on_admin_cmd(cmd, args)
-            self.set_feedback(str(result) if str(result).startswith(("Error:", "Agent not found", "No creature")) else success_msg)
+            self._show_command_result(result)
             sound_engine.play_sfx("god_power")
+
+    def _show_command_result(self, result: Any) -> None:
+        message = str(result)
+        failed = message.startswith(("Error", "Unknown command", "Agent not found", "No creature",
+                                     "No adult", "Failed", "Unknown", "Invalid")) or " is not possessed" in message
+        self.set_feedback(message, ok=not failed)
 
     def _smite_agent(self, target_id: str) -> None:
         if self.on_admin_cmd:
-            self.on_admin_cmd("kill", {"target": target_id})
-            self.set_feedback("Smote creature with lightning!")
+            result = self.on_admin_cmd("kill", {"target": target_id})
+            self._show_command_result(result)
             sound_engine.play_sfx("thunder")
 
     def _trigger_meteor(self) -> None:
         if self.on_admin_cmd:
-            self.on_admin_cmd("fire", {"x": 60, "y": 60})
-            self.on_admin_cmd("fire", {"x": 61, "y": 60})
-            self.on_admin_cmd("fire", {"x": 60, "y": 61})
-            self.set_feedback("METEOR STRIKE! Impact at sector (60, 60)")
+            results = [self.on_admin_cmd("fire", {"x": x, "y": y})
+                       for x, y in ((60, 60), (61, 60), (60, 61))]
+            self._show_command_result(" ".join(map(str, results)))
             sound_engine.play_sfx("meteor_boom")
 
     def _cmd_disaster(self, dtype: str, gx: int, gy: int, msg: str) -> None:
         if self.on_admin_cmd:
-            self.on_admin_cmd(dtype, {"x": gx, "y": gy})
-            self.set_feedback(msg)
+            result = self.on_admin_cmd(dtype, {"x": gx, "y": gy})
+            self._show_command_result(result)
             sound_engine.play_sfx("thunder" if dtype == "flood" else "roar")
 
     def _extinguish_hazards(self) -> None:
         if self.on_admin_cmd:
-            self.on_admin_cmd("weather", {"value": "RAIN"})
-            self.set_feedback("Summoned rainstorm to quell fires!")
+            result = self.on_admin_cmd("extinguish", {})
+            self._show_command_result(result)
             sound_engine.play_sfx("splash")
 
     def _set_hour(self, hour_str: str) -> None:
         if self.on_admin_cmd:
             hour = int(hour_str.split(":", 1)[0])
             result = self.on_admin_cmd("set_time", {"day": self._world_day, "hour": hour})
-            self.set_feedback(str(result))
+            self._show_command_result(result)
             sound_engine.play_sfx("god_power")
 
     def _set_season(self, season: str) -> None:
         if self.on_admin_cmd:
-            self.on_admin_cmd("season", {"value": season})
-            self.set_feedback(f"Season changed to {season}")
+            result = self.on_admin_cmd("season", {"value": season})
+            self._show_command_result(result)
             sound_engine.play_sfx("god_power")
 
     def _bloom_flora(self) -> None:
         if self.on_admin_cmd:
             result = self.on_admin_cmd("bloom", {})
-            self.set_feedback(str(result))
+            self._show_command_result(result)
             sound_engine.play_sfx("god_power")
 
     def _cmd_simple(self, cmd: str, msg: str) -> None:
         if self.on_admin_cmd:
-            self.on_admin_cmd(cmd, {})
-            self.set_feedback(msg)
+            result = self.on_admin_cmd(cmd, {})
+            self._show_command_result(result)
             sound_engine.play_sfx("god_power")
 
     # ------------------------------------------------------------------

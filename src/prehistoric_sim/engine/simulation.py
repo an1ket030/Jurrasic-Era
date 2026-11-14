@@ -9,6 +9,7 @@ The engine never imports from ui, admin, io, or cli.
 from __future__ import annotations
 
 import logging
+import threading
 import time
 from typing import Any, Callable
 
@@ -116,6 +117,7 @@ class Simulation:
         world_config: dict[str, Any] | None = None,
     ) -> None:
         self.config = config
+        self.state_lock = threading.RLock()
         self.species_data: dict[str, dict] = species_data
         self.world_config: dict[str, Any] = world_config or {}
 
@@ -178,6 +180,10 @@ class Simulation:
 
     def step(self) -> None:
         """Advance the simulation by one tick."""
+        with self.state_lock:
+            self._step_unlocked()
+
+    def _step_unlocked(self) -> None:
         if self.paused:
             return
 
@@ -471,19 +477,19 @@ class Simulation:
     def apply_admin_command(self, command: str, args: dict[str, Any]) -> str:
         """Apply an admin command. Returns a result message."""
         from prehistoric_sim.admin.commands import execute_command  # noqa: PLC0415
-        entry = {"tick": self.tick, "command": command, "args": args}
-        self._command_log.append(entry)
-        result = execute_command(self, command, args)
-        # Emit admin event
-        self.event_bus.emit(Event(
-            tick=self.tick,
-            category=EventCategory.ADMIN,
-            subcategory=EventSubcategory.ADMIN_COMMAND,
-            actor_ids=[],
-            position=None,
-            payload={"command": command, "args": args, "result": str(result)[:200]},
-        ))
-        return result
+        with self.state_lock:
+            entry = {"tick": self.tick, "command": command, "args": args}
+            self._command_log.append(entry)
+            result = execute_command(self, command, args)
+            self.event_bus.emit(Event(
+                tick=self.tick,
+                category=EventCategory.ADMIN,
+                subcategory=EventSubcategory.ADMIN_COMMAND,
+                actor_ids=[],
+                position=None,
+                payload={"command": command, "args": args, "result": str(result)[:200]},
+            ))
+            return result
 
     # ------------------------------------------------------------------
     # Spawning helpers
